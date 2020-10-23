@@ -30,7 +30,11 @@ def process_data_kafka(path_of_data, broker_address, topic_name, **kwargs):
 
         return "Failed"
 
-if __name__ == '__main__':
 
-    process_data_kafka("data.txt", "kafka:9092", "locations")
-    
+if __name__ == "__main__":
+
+    TOPIC_NAME = os.getenv("TOPIC_NAME")
+
+    brokerAddresses = os.getenv("brokerAddresses")
+
+    process_data_kafka("app/data.txt", brokerAddresses, TOPIC_NAME)

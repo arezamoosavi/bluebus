@@ -4,6 +4,10 @@ networks:
   default:
     driver: bridge
 
+volumes:
+  postgres_data: {}
+  postgres_data_backups: {}
+
 services:
   spark: &baseApp
     build:
@@ -17,6 +21,9 @@ services:
       - 18080:18080
     volumes:
       - ./src/main:/opt/project/app
+    env_file:
+      - ./.envs/.env_vars
+      - ./.envs/.postgres
     restart: unless-stopped
     command: sh /run.sh
 
@@ -27,6 +34,17 @@ services:
     ports:
       - 1100:1100
     command: sh /jupyter_run.sh
+
+  postgres:
+    image: postgres:12.3
+    container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.postgres
+    restart: unless-stopped
+
   zookeeper:
     image: confluentinc/cp-zookeeper:5.2.0
     hostname: zookeeper
