@@ -14,7 +14,7 @@ pg:
 	docker-compose up -d postgres
 
 spark:
-	docker-compose up -d spark
+	docker-compose up --build -d spark
 
 jupyter:
 	docker-compose up -d jupyter

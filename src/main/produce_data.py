@@ -1,7 +1,7 @@
 import csv, os, logging
 from datetime import datetime
 from kafka import KafkaProducer
-from json import dumps
+import json
 
 logger = logging.getLogger(__name__)
 logger.setLevel("DEBUG")
@@ -10,7 +10,7 @@ logger.setLevel("DEBUG")
 def process_data_kafka(path_of_data, broker_address, topic_name, **kwargs):
     producer = KafkaProducer(
         bootstrap_servers=[broker_address],
-        value_serializer=lambda x: dumps(x).encode("utf-8"),
+        value_serializer=lambda x: json.dumps(x).encode("utf-8"),
     )
     if producer.bootstrap_connected():
 
@@ -20,8 +20,8 @@ def process_data_kafka(path_of_data, broker_address, topic_name, **kwargs):
 
             reader = csv.DictReader(file)
             for row in reader:
-                data = dict(row)
-                producer.send(topic_name, value=data)
+
+                producer.send(topic_name, value=row)
                 producer.flush()
 
         return "Done"
@@ -38,3 +38,4 @@ if __name__ == "__main__":
     brokerAddresses = os.getenv("brokerAddresses")
 
     process_data_kafka("app/data.txt", brokerAddresses, TOPIC_NAME)
+
